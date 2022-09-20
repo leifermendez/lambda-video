@@ -39,7 +39,7 @@ const responseHttp = (statusCode = 200, message = "todo bien") => {
 const saveVideo = async () =>
   new Promise((resolve, reject) => {
     console.log("Guardando...");
-    const bodyFile = fs.createReadStream(outputOpt);
+    const bodyFile = fs.createReadStream(output);
     const paramsSnap = {
       Bucket: AWS_BUCKET_NAME,
       Key: `${crypto.randomBytes(20).toString("hex")}.mp4`,
