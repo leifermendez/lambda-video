@@ -1,0 +1,24 @@
+{
+  "name": "lambda-video-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "sls  deploy --aws-profile demo"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffprobe-installer/ffprobe": "^1.4.1",
+    "aws-sdk": "^2.1218.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "ytdl-core": "^4.11.2"
+  },
+  "devDependencies": {
+    "serverless": "^3.22.0",
+    "serverless-offline": "^10.1.0",
+    "serverless-plugin-include-dependencies": "^5.0.0"
+  }
+}
