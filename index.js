@@ -6,10 +6,10 @@ const fs = require("fs");
 
 const output = "/tmp/video.mp4";
 const outputOpt = "/tmp/video-opt.mp4";
-const AWS_REGION = process.env.AWS_REGION || "us-east-1";
-const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME || "";
-const AWS_ID = process.env.AWS_ID || "";
-const AWS_KEY = process.env.AWS_KEY || "";
+const AWS_REGION = process.env.APP_AWS_REGION || "us-east-1";
+const AWS_BUCKET_NAME = process.env.APP_AWS_BUCKET_NAME || "";
+const AWS_ID = process.env.APP_AWS_ID || "";
+const AWS_KEY = process.env.APP_AWS_KEY || "";
 AWS.config.update({
   accessKeyId: AWS_ID,
   secretAccessKey: AWS_KEY,
