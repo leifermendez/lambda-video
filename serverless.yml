@@ -1,0 +1,30 @@
+service: lambda-video-yt
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+
+functions:
+  hello:
+    handler: index.makeVideo
+    events:
+      - httpApi:
+          path: /
+          method: get
+    memorySize: 1024
+    timeout: 30
+    environment:
+      YTDL_NO_UPDATE: 1
+      APP_AWS_KEY: ${env:AWS_SECRET_ACCESS_KEY}
+      APP_AWS_ID: ${env:AWS_SECRET_ACCESS_KEY}
+      APP_AWS_REGION: "us-east-1"
+      APP_AWS_BUCKET_NAME: "template-videos"
+
+package:
+  individually: true
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-common-excludes
+  - serverless-plugin-include-dependencies

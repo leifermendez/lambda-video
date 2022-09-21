@@ -1,5 +1,4 @@
 node_modules
 .serverless
-serverless.yml
 layer/*
 !layer/.gitkeep
