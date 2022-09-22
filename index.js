@@ -108,7 +108,7 @@ const downloadVideoFromS3 = (fileKey) =>
       stream = s3
         .getObject({
           Bucket: AWS_BUCKET_NAME,
-          Key: fileKey,
+          Key: `${fileKey}.mp4`,
         })
         .createReadStream();
     stream.on("error", reject);
@@ -126,8 +126,8 @@ const downloadVideoFromS3 = (fileKey) =>
  * @returns
  */
 module.exports.makeVideo = async (event) => {
-  const fileKey = event.queryStringParameters?.fileKey || null;
-  if (!fileKey) return responseHttp(402, "fileKey NULL");
+  const fileKey = event.queryStringParameters?.video || null;
+  if (!fileKey) return responseHttp(402, "?video= NULL");
   await downloadVideoFromS3(fileKey);
   await videoResize();
   const save = await saveVideo();
