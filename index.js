@@ -36,13 +36,13 @@ const responseHttp = (statusCode = 200, message = "todo bien") => {
  *
  * @returns
  */
-const saveVideo = async () =>
+const saveVideo = async (name) =>
   new Promise((resolve, reject) => {
     console.log("Guardando...");
     const bodyFile = fs.createReadStream(output);
     const paramsSnap = {
       Bucket: AWS_BUCKET_NAME,
-      Key: `${crypto.randomBytes(20).toString("hex")}.mp4`,
+      Key: `${name}.mp4`,
       Body: bodyFile,
       ContentType: "video/mp4",
       ACL: "public-read",
@@ -119,10 +119,10 @@ const downloadVideo = (url) =>
  */
 module.exports.makeVideo = async (event) => {
   const idVideo = event.queryStringParameters?.video || null;
-  if (!idVideo) return responseHttp(402, "ID NULL");
+  if (!idVideo) return responseHttp(402, "?video= NULL");
   const url = `https://youtu.be/${idVideo}`;
   await downloadVideo(url);
-  const save = await saveVideo();
+  const save = await saveVideo(idVideo);
 
   return responseHttp(200, save);
 };
