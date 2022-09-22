@@ -1,11 +1,24 @@
 "use strict";
 const crypto = require("crypto");
-const ytdl = require("ytdl-core");
 const AWS = require("aws-sdk");
 const fs = require("fs");
+const ffmpeg = require("fluent-ffmpeg");
+const OS_SYSTEM = process.platform || "win32";
 
+const ffmpegPath =
+  OS_SYSTEM === "win32"
+    ? require("@ffmpeg-installer/ffmpeg").path
+    : "/opt/ffmpeg/ffmpeg";
+const ffprobePath =
+  OS_SYSTEM === "win32"
+    ? require("@ffprobe-installer/ffprobe").path
+    : "/opt/ffmpeg/ffprobe";
+
+ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath);
+1;
 const output = "/tmp/video.mp4";
-const outputOpt = "/tmp/video-opt.mp4";
+const outputResize = "/tmp/reize-video.mp4";
 const AWS_REGION = process.env.APP_AWS_REGION || "us-east-1";
 const AWS_BUCKET_NAME = process.env.APP_AWS_BUCKET_NAME || "";
 const AWS_ID = process.env.APP_AWS_ID || "";
@@ -39,10 +52,10 @@ const responseHttp = (statusCode = 200, message = "todo bien") => {
 const saveVideo = async () =>
   new Promise((resolve, reject) => {
     console.log("Guardando...");
-    const bodyFile = fs.createReadStream(output);
+    const bodyFile = fs.createReadStream(outputResize);
     const paramsSnap = {
       Bucket: AWS_BUCKET_NAME,
-      Key: `${crypto.randomBytes(20).toString("hex")}.mp4`,
+      Key: `resize-${crypto.randomBytes(20).toString("hex")}.mp4`,
       Body: bodyFile,
       ContentType: "video/mp4",
       ACL: "public-read",
@@ -63,7 +76,7 @@ const videoResize = () =>
   new Promise((resolve, reject) => {
     const opts = {
       inputPath: output,
-      outputPath: outputOpt,
+      outputPath: outputResize,
       format: "mp4",
       size: "640x480",
     };
@@ -89,27 +102,22 @@ const videoResize = () =>
  * @returns
  *
  */
-const downloadVideo = (url) =>
+const downloadVideoFromS3 = (fileKey) =>
   new Promise((resolve, reject) => {
-    try {
-      console.log("Iniciando...");
-      const videoCore = ytdl(url, {
-        range: { start: 0, end: 18500000 },
-        quality: "lowest",
-      });
-      videoCore.pipe(fs.createWriteStream(output));
-      videoCore.on("error", (e) => console.log("Error", e));
-      videoCore.on("end", () => {
-        ytdl(url, { range: { start: 1001 } }).pipe(
-          fs.createWriteStream(output, { flags: "a" })
-        );
-        console.log("Finalizo");
-        resolve(true);
-      });
-    } catch (e) {
-      console.log("Error", e.message);
-      reject(e.message);
-    }
+    const file = fs.createWriteStream(output),
+      stream = s3
+        .getObject({
+          Bucket: AWS_BUCKET_NAME,
+          Key: fileKey,
+        })
+        .createReadStream();
+    stream.on("error", reject);
+    file.on("error", reject);
+    file.on("finish", () => {
+      console.log("downloaded", fileKey);
+      resolve(outputResize);
+    });
+    stream.pipe(file);
   });
 
 /**
@@ -118,10 +126,10 @@ const downloadVideo = (url) =>
  * @returns
  */
 module.exports.makeVideo = async (event) => {
-  const idVideo = event.queryStringParameters?.video || null;
-  if (!idVideo) return responseHttp(402, "ID NULL");
-  const url = `https://youtu.be/${idVideo}`;
-  await downloadVideo(url);
+  const fileKey = event.queryStringParameters?.fileKey || null;
+  if (!fileKey) return responseHttp(402, "fileKey NULL");
+  await downloadVideoFromS3(fileKey);
+  await videoResize();
   const save = await saveVideo();
 
   return responseHttp(200, save);

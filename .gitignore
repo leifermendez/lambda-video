@@ -1,4 +1,4 @@
 node_modules
 .serverless
-layer/*
-!layer/.gitkeep
+binaries/*
+!binaries/.gitkeep

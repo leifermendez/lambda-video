@@ -15,9 +15,20 @@
     "ytdl-core": "^4.11.2"
   },
   "devDependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffprobe-installer/ffprobe": "^1.4.1",
+    "ava": "^0.24.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "fs-extra": "^5.0.0",
     "serverless": "^3.22.0",
     "serverless-offline": "^10.1.0",
     "serverless-plugin-common-excludes": "^4.0.0",
-    "serverless-plugin-include-dependencies": "^5.0.0"
+    "serverless-plugin-include-dependencies": "^5.0.0",
+    "serverless-s3-remover": "^0.4.1",
+    "serverless-webpack": "^5.9.1",
+    "webpack": "^5.74.0",
+    "webpack-plugin-copy": "^1.0.1"
   }
 }

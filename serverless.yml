@@ -1,4 +1,4 @@
-service: lambda-video-yt
+service: lambda-resize-video
 frameworkVersion: "3"
 
 provider:
@@ -23,6 +23,9 @@ functions:
 
 package:
   individually: true
+  patterns:
+    - "!node_modules/@ffprobe-installer/**"
+    - "!binaries/**"
 
 plugins:
   - serverless-offline
