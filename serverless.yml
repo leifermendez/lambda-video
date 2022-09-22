@@ -17,7 +17,7 @@ functions:
     environment:
       YTDL_NO_UPDATE: 1
       APP_AWS_KEY: ${env:AWS_SECRET_ACCESS_KEY}
-      APP_AWS_ID: ${env:AWS_SECRET_ACCESS_KEY}
+      APP_AWS_ID: ${env:AWS_ACCESS_KEY_ID}
       APP_AWS_REGION: "us-east-1"
       APP_AWS_BUCKET_NAME: "template-videos"
 
